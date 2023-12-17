@@ -73,6 +73,8 @@ typedef struct MediaCodecEncContext {
     int bitrate_mode;
     int level;
     int pts_as_dts;
+    int enc_quality;
+    int complexity;
 } MediaCodecEncContext;
 
 enum {
@@ -314,6 +316,12 @@ static av_cold int mediacodec_init(AVCodecContext *avctx)
     }
     if (s->pts_as_dts == -1)
         s->pts_as_dts = avctx->max_b_frames <= 0;
+    
+    if (s->enc_quality > -1)
+        ff_AMediaFormat_setInt32(format, "quality", s->enc_quality);
+
+    if (s->complexity > -1)
+        ff_AMediaFormat_setInt32(format, "complexity", s->complexity);
 
     ret = ff_AMediaCodec_getConfigureFlagEncode(s->codec);
     ret = ff_AMediaCodec_configure(s->codec, format, s->window, NULL, ret);
@@ -608,6 +616,10 @@ static const AVCodecHWConfigInternal *const mediacodec_hw_configs[] = {
     { "pts_as_dts", "Use PTS as DTS. It is enabled automatically if avctx max_b_frames <= 0, "              \
                     "since most of Android devices don't output B frames by default.",                      \
                     OFFSET(pts_as_dts), AV_OPT_TYPE_BOOL, {.i64 = -1}, -1, 1, VE },                         \
+    { "enc_quality", "Specify the encoding quality value when the bitrate mode is cq.",                     \
+                    OFFSET(enc_quality), AV_OPT_TYPE_INT, {.i64 = -1}, -1, INT_MAX, VE },                       \
+    { "complexity", "Set encoder complexity value",                                                         \
+                    OFFSET(complexity), AV_OPT_TYPE_INT, {.i64 = -1}, -1, INT_MAX, VE },                        \
 
 
 #define MEDIACODEC_ENCODER_CLASS(name)              \
