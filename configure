@@ -2154,6 +2154,7 @@ ARCH_EXT_LIST_PPC="
 "
 
 ARCH_EXT_LIST_RISCV="
+    rv
     rvv
 "
 
@@ -2679,7 +2680,8 @@ ppc4xx_deps="ppc"
 vsx_deps="altivec"
 power8_deps="vsx"
 
-rvv_deps="riscv"
+rv_deps="riscv"
+rvv_deps="rv"
 
 loongson2_deps="mips"
 loongson3_deps="mips"
@@ -3834,7 +3836,7 @@ zmq_filter_deps="libzmq"
 zoompan_filter_deps="swscale"
 zscale_filter_deps="libzimg const_nan"
 scale_vaapi_filter_deps="vaapi"
-scale_vt_filter_deps="videotoolbox"
+scale_vt_filter_deps="videotoolbox VTPixelTransferSessionCreate"
 scale_vulkan_filter_deps="vulkan spirv_compiler"
 vpp_qsv_filter_deps="libmfx"
 vpp_qsv_filter_select="qsvvpp"
@@ -6243,6 +6245,7 @@ elif enabled ppc; then
 
 elif enabled riscv; then
 
+    enabled rv && check_inline_asm rv '".option arch, +zbb\nrev8 t0, t1"'
     enabled rvv && check_inline_asm rvv '".option arch, +v\nvsetivli zero, 0, e8, m1, ta, ma"'
 
 elif enabled x86; then
@@ -6498,6 +6501,7 @@ check_headers termios.h
 check_headers unistd.h
 check_headers valgrind/valgrind.h
 check_func_headers VideoToolbox/VTCompressionSession.h VTCompressionSessionPrepareToEncodeFrames -framework VideoToolbox
+check_func_headers VideoToolbox/VideoToolbox.h VTPixelTransferSessionCreate -framework VideoToolbox
 check_func_headers VideoToolbox/VideoToolbox.h VTPixelRotationSessionCreate -framework VideoToolbox
 check_headers windows.h
 check_headers asm/types.h
@@ -6776,6 +6780,7 @@ elif enabled libvpl; then
 # is extracted from "vpl >= 2.6"
     check_pkg_config libmfx "vpl >= 2.6" "mfxvideo.h mfxdispatcher.h" MFXLoad || \
             die "ERROR: libvpl >= 2.6 not found"
+    add_cflags -DMFX_DEPRECATED_OFF
 fi
 
 if enabled libmfx; then
