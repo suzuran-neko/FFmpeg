@@ -75,6 +75,8 @@ typedef struct MediaCodecEncContext {
     int pts_as_dts;
     int enc_quality;
     int complexity;
+    int qp_min;
+    int qp_max;
 } MediaCodecEncContext;
 
 enum {
@@ -322,6 +324,12 @@ static av_cold int mediacodec_init(AVCodecContext *avctx)
 
     if (s->complexity > -1)
         ff_AMediaFormat_setInt32(format, "complexity", s->complexity);
+
+    if (s->qp_min > -1)
+        ff_AMediaFormat_setInt32(format, "video-qp-min", s->qp_min);
+
+    if (s->qp_max > -1)
+        ff_AMediaFormat_setInt32(format, "video-qp-max", s->qp_max);
 
     ret = ff_AMediaCodec_getConfigureFlagEncode(s->codec);
     ret = ff_AMediaCodec_configure(s->codec, format, s->window, NULL, ret);
@@ -620,6 +628,10 @@ static const AVCodecHWConfigInternal *const mediacodec_hw_configs[] = {
                     OFFSET(enc_quality), AV_OPT_TYPE_INT, {.i64 = -1}, -1, INT_MAX, VE },                   \
     { "complexity", "Set encoder complexity value",                                                         \
                     OFFSET(complexity), AV_OPT_TYPE_INT, {.i64 = -1}, -1, INT_MAX, VE },                    \
+    { "qp_min", "Set minimum quantization parameter",                                                       \
+                    OFFSET(qp_min), AV_OPT_TYPE_INT, {.i64 = -1}, -1, INT_MAX, VE },                        \
+    { "qp_max", "Set maximum quantization parameter",                                                       \
+                    OFFSET(qp_max), AV_OPT_TYPE_INT, {.i64 = -1}, -1, INT_MAX, VE },                        \
 
 
 #define MEDIACODEC_ENCODER_CLASS(name)              \
