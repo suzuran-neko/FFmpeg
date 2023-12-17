@@ -616,10 +616,10 @@ static const AVCodecHWConfigInternal *const mediacodec_hw_configs[] = {
     { "pts_as_dts", "Use PTS as DTS. It is enabled automatically if avctx max_b_frames <= 0, "              \
                     "since most of Android devices don't output B frames by default.",                      \
                     OFFSET(pts_as_dts), AV_OPT_TYPE_BOOL, {.i64 = -1}, -1, 1, VE },                         \
-    { "enc_quality", "Specify the encoding quality value when the bitrate mode is cq.",                     \
-                    OFFSET(enc_quality), AV_OPT_TYPE_INT, {.i64 = -1}, -1, INT_MAX, VE },                       \
+    { "quality", "Specify the encoding quality value when the bitrate mode is cq.",                         \
+                    OFFSET(enc_quality), AV_OPT_TYPE_INT, {.i64 = -1}, -1, INT_MAX, VE },                   \
     { "complexity", "Set encoder complexity value",                                                         \
-                    OFFSET(complexity), AV_OPT_TYPE_INT, {.i64 = -1}, -1, INT_MAX, VE },                        \
+                    OFFSET(complexity), AV_OPT_TYPE_INT, {.i64 = -1}, -1, INT_MAX, VE },                    \
 
 
 #define MEDIACODEC_ENCODER_CLASS(name)              \
